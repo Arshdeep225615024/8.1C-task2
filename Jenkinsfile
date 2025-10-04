@@ -2,64 +2,65 @@ pipeline {
     agent any
 
     stages {
-        stage('Checkout') {
+        stage('Build') {
             steps {
-                git branch: 'main', url: 'https://github.com/arshdeep225615024/8.2CDevSecOps.git'
+                echo 'Running build stage...'
+                sh 'echo "Build completed"'
             }
-        }
-
-        stage('Install Dependencies') {
-            steps {
-                sh 'npm install'
-            }
-        }
-
-        stage('Run Tests') {
-            steps {
-                script {
-                    try {
-                        sh 'npm test || true'   // quick fix: or replace test script with "echo ok"
-                        emailext(
-                            to: 'arshdeep932985@gmail.com',
-                            subject: "✅ TEST PASSED - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                            body: "Tests completed. Check attached logs.",
-                            attachLog: true
-                        )
-                    } catch (Exception e) {
-                        emailext(
-                            to: 'arshdeep932985@gmail.com',
-                            subject: "❌ TEST FAILED - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                            body: "Tests failed. Check attached logs.",
-                            attachLog: true
-                        )
-                        throw e
-                    }
+            post {
+                always {
+                    emailext(
+                        to: "arshdeep932985@gmail.com",
+                        subject: "Build Stage - ${currentBuild.currentResult}",
+                        body: """Hello Team,<br><br>
+                                The <b>Build</b> stage has completed.<br>
+                                Status: ${currentBuild.currentResult}<br>
+                                Build Number: ${env.BUILD_NUMBER}<br>
+                                Job: ${env.JOB_NAME}<br><br>
+                                Regards,<br>
+                                Jenkins"""
+                    )
                 }
             }
         }
 
-        stage('Security Scan') {
+        stage('Test') {
             steps {
-                script {
-                    try {
-                        sh 'npm audit || true'
-                        emailext(
-                            to: 'arshdeep932985@gmail.com',
-                            subject: "✅ SECURITY SCAN PASSED - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                            body: "Security scan completed successfully.",
-                            attachLog: true
-                        )
-                    } catch (Exception e) {
-                        emailext(
-                            to: 'arshdeep932985@gmail.com',
-                            subject: "❌ SECURITY SCAN FAILED - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                            body: "Security scan failed. Check attached logs.",
-                            attachLog: true
-                        )
-                        throw e
-                    }
+                echo 'Running test stage...'
+                sh 'exit 1'  // Force a failure to test "FAILURE" emails
+            }
+            post {
+                always {
+                    emailext(
+                        to: "arshdeep932985@gmail.com",
+                        subject: "Test Stage - ${currentBuild.currentResult}",
+                        body: """Hello Team,<br><br>
+                                The <b>Test</b> stage has completed.<br>
+                                Status: ${currentBuild.currentResult}<br>
+                                Build Number: ${env.BUILD_NUMBER}<br>
+                                Job: ${env.JOB_NAME}<br><br>
+                                Regards,<br>
+                                Jenkins"""
+                    )
                 }
             }
         }
     }
+
+    post {
+        always {
+            emailext(
+                to: "arshdeep932985@gmail.com",
+                subject: "Pipeline Completed - ${currentBuild.currentResult}",
+                body: """Hello Team,<br><br>
+                        The <b>Pipeline</b> has finished.<br>
+                        Status: ${currentBuild.currentResult}<br>
+                        Build Number: ${env.BUILD_NUMBER}<br>
+                        Job: ${env.JOB_NAME}<br><br>
+                        Regards,<br>
+                        Jenkins"""
+            )
+        }
+    }
 }
+
