@@ -20,14 +20,14 @@ pipeline {
                     try {
                         sh 'npm test || true'   // quick fix: or replace test script with "echo ok"
                         emailext(
-                            to: 'your_email@gmail.com',
+                            to: 'arshdeep932985@gmail.com',
                             subject: "✅ TEST PASSED - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                             body: "Tests completed. Check attached logs.",
                             attachLog: true
                         )
                     } catch (Exception e) {
                         emailext(
-                            to: 'your_email@gmail.com',
+                            to: 'arshdeep932985@gmail.com',
                             subject: "❌ TEST FAILED - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                             body: "Tests failed. Check attached logs.",
                             attachLog: true
@@ -44,14 +44,14 @@ pipeline {
                     try {
                         sh 'npm audit || true'
                         emailext(
-                            to: 'your_email@gmail.com',
+                            to: 'arshdeep932985@gmail.com',
                             subject: "✅ SECURITY SCAN PASSED - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                             body: "Security scan completed successfully.",
                             attachLog: true
                         )
                     } catch (Exception e) {
                         emailext(
-                            to: 'your_email@gmail.com',
+                            to: 'arshdeep932985@gmail.com',
                             subject: "❌ SECURITY SCAN FAILED - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                             body: "Security scan failed. Check attached logs.",
                             attachLog: true
